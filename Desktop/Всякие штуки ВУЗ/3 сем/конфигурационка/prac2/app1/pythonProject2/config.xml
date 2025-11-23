@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <package_name>example-package</package_name>
+    <repository_url>https://github.com/example/repo.git</repository_url>
+    <test_repo_mode>local</test_repo_mode>
+    <package_version>1.0.0</package_version>
+    <filter_substring>test</filter_substring>
+</config>
