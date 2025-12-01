@@ -1,9 +1,22 @@
-- op: LOAD
-  args: [R1, 0x64]
-- op: LOAD
-  args: [R2, 0xC8]
-- op: ADD
-  args: [R1, R2]
-- op: STORE
-  args: [R1, 0x12C]
-- op: HALT
+[
+    {
+        "op": "LDI",
+        "target_reg": "R7",
+        "value": 983
+    },
+    {
+        "op": "LOAD",
+        "target_reg": "R10",
+        "addr": 459
+    },
+    {
+        "op": "STORE",
+        "addr": 235,
+        "source_reg": "R0"
+    },
+    {
+        "op": "NEQ",
+        "target_reg": "R9",
+        "addr": 21
+    }
+]
