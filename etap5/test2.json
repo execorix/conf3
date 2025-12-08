@@ -1,0 +1,35 @@
+[
+  {
+    "op": "LDI",
+    "target_reg": "R1",
+    "value": 50
+  },
+  {
+    "op": "IN",
+    "target_reg": "R2",
+    "value_code": 1
+  },
+  {
+    "op": "ADD",
+    "target_reg": "R1",
+    "source_reg": "R2"
+  },
+  {
+    "op": "LDI",
+    "target_reg": "R3",
+    "value": 10
+  },
+  {
+    "op": "SUB",
+    "target_reg": "R1",
+    "source_reg": "R3"
+  },
+  {
+    "op": "OUT",
+    "target_reg": "R1",
+    "value_code": 10
+  },
+  {
+    "op": "NOP"
+  }
+]

@@ -2,17 +2,12 @@
 
     {"op": "ADD", "target_reg": "R1", "source_reg": "R2"},
     {"op": "SUB", "target_reg": "R2", "source_reg": "R1"},
-
     {"op": "LOAD", "target_reg": "R3", "addr": 50},
-
     {"op": "JZ", "condition_reg": "R3", "addr": 30},
-
     {"op": "LDI", "target_reg": "R0", "value": 999},
-
     {"op": "LDI", "target_reg": "R0", "value": 888},
     {"op": "JMP", "addr": 40},
-
+    {"op":  "NEQ", "target_reg": "R3", "value": 1000},
     {"op": "LDI", "target_reg": "R0", "value": 777},
-
     {"op": "LDI", "target_reg": "R0", "value": 100}
 ]

@@ -1,0 +1,70 @@
+[
+  {
+    "op": "LDI",
+    "target_reg": "R15",
+    "value": 1
+  },
+  {
+    "op": "STORE",
+    "source_reg": "R15",
+    "addr": 10
+  },
+  {
+    "op": "STORE",
+    "source_reg": "R15",
+    "addr": 20
+  },
+  {
+    "op": "LDI",
+    "target_reg": "R15",
+    "value": 2
+  },
+  {
+    "op": "STORE",
+    "source_reg": "R15",
+    "addr": 11
+  },
+  {
+    "op": "LDI",
+    "target_reg": "R15",
+    "value": 9
+  },
+  {
+    "op": "STORE",
+    "source_reg": "R15",
+    "addr": 21
+  },
+  {
+    "op": "LOAD",
+    "target_reg": "R5",
+    "addr": 10
+  },
+  {
+    "op": "NEQ",
+    "target_reg": "R5",
+    "addr": 20
+  },
+  {
+    "op": "STORE",
+    "source_reg": "R5",
+    "addr": 10
+  },
+  {
+    "op": "LOAD",
+    "target_reg": "R5",
+    "addr": 11
+  },
+  {
+    "op": "NEQ",
+    "target_reg": "R5",
+    "addr": 21
+  },
+  {
+    "op": "STORE",
+    "source_reg": "R5",
+    "addr": 11
+  },
+  {
+    "op": "NOP"
+  }
+]

@@ -1,13 +1,59 @@
 [
-
-    {"op": "LOAD", "target_reg": "R1", "addr": 100},
-    {"op": "STORE", "addr": 200, "source_reg": "R1"},
-
-    {"op": "LOAD", "target_reg": "R2", "addr": 101},
-    {"op": "STORE", "addr": 201, "source_reg": "R2"},
-
-    {"op": "LOAD", "target_reg": "R3", "addr": 102},
-    {"op": "STORE", "addr": 202, "source_reg": "R3"},
-
-    {"op": "NEQ", "target_reg": "R0", "addr": 100}
+    {
+        "op": "LDI",
+        "value": 256,
+        "target_reg": "R1"
+    },
+    {
+        "op": "LDI",
+        "value": 512,
+        "target_reg": "R2"
+    },
+    {
+        "op": "LDI",
+        "value": 5,
+        "target_reg": "R3"
+    },
+    {
+        "op": "LDI",
+        "value": 1,
+        "target_reg": "R4"
+    },
+    {
+        "op": "JZ",
+        "condition_reg": "R3",
+        "addr": 10
+    },
+    {
+        "op": "LOAD",
+        "target_reg": "R5",
+        "addr": 256
+    },
+    {
+        "op": "STORE",
+        "addr": 512,
+        "source_reg": "R5"
+    },
+    {
+        "op": "ADD",
+        "target_reg": "R1",
+        "source_reg": "R4"
+    },
+    {
+        "op": "ADD",
+        "target_reg": "R2",
+        "source_reg": "R4"
+    },
+    {
+        "op": "LDI",
+        "value": 0,
+        "target_reg": "R3"
+    },
+    {
+        "op": "JMP",
+        "addr": 4
+    },
+    {
+        "op": "NOP"
+    }
 ]

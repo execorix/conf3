@@ -1,0 +1,22 @@
+[
+    {
+        "op": "LDI",
+        "value": 983,
+        "target_reg": "R7"
+    },
+    {
+        "op": "LOAD",
+        "target_reg": "R10",
+        "addr": 459
+    },
+    {
+        "op": "STORE",
+        "addr": 235,
+        "source_reg": "R0"
+    },
+    {
+        "op": "NEQ",
+        "target_reg": "R9",
+        "addr": 21
+    }
+]

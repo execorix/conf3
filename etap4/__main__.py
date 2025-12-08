@@ -1,148 +1,136 @@
 import argparse
 import sys
 import yaml
-
-# --- СПЕЦИФИКАЦИЯ УВМ (Обновлено для Этапа 4) ---
+from typing import Dict, Any, List
 OPCODES = {
-    'NEQ': 0x2,
-    'ADD': 0x3,  #  Сложение Reg-Reg
-    'SUB': 0x4,  #  Вычитание Reg-Reg
-    'JMP': 0x5,  #  Безусловный переход
-    'JZ': 0x6,  # Условный переход
-    'STORE': 0x6,
-    'LDI': 0x9,
-    'LOAD': 0xC
+    'NOP': 0x0,'NEQ': 0x2,'ADD': 0x3,'JMP': 0x5,'JZ': 0x6,'STORE': 0x6,  # Opcode 0x6 для STORE (A=6)
+    'LDI': 0x9, 'LOAD': 0xC
 }
-# ... (Остальные константы без изменений) ...
-MAX_REG_ADDR = 0xF
-MAX_MEM_ADDR_31 = 0x7FFFFFFF
-INSTRUCTION_SIZE = 5
-
-
-def parse_register(reg: str) -> int:
-    if not reg.startswith('R') or not reg[1:].isdigit():
-        raise ValueError(f"Некорректный регистр: {reg}")
-    reg_idx = int(reg[1:])
-    if not 0 <= reg_idx <= MAX_REG_ADDR:
-        raise ValueError(f"Регистр вне диапазона [R0-R{MAX_REG_ADDR}]: {reg}")
-    return reg_idx
-
-
+MAX_REG_ADDR = 0xF  # 4 бита
+MAX_CONST_26 = 0x3FFFFFF  # 26 бит
+MAX_ADDR_31 = 0x7FFFFFFF  # 31 бит
+INSTRUCTION_SIZE = 5  # 5 байт
+def parse_register(reg_str: str) -> int:
+    if not reg_str.startswith('R'):
+        raise ValueError(f"Ожидался регистр в формате 'R<num>', получено: {reg_str}")
+    try:
+        reg_num = int(reg_str[1:])
+        if not 0 <= reg_num <= MAX_REG_ADDR:
+            raise ValueError(f"Номер регистра вне диапазона [R0-R{MAX_REG_ADDR}].")
+        return reg_num
+    except ValueError:
+        raise ValueError(f"Неверный формат номера регистра: {reg_str}")
 def translate_instruction(instr: dict) -> dict:
-    """Транслирует JSON-команду во внутреннее представление (IR)."""
-    op = instr['op']
+    op = instr.get('op')
     if op not in OPCODES:
-        raise ValueError(f"Неизвестная операция: {op}")
-
+        raise ValueError(f"Неизвестная операция или операция не поддерживается: {op}")
     base = {'op': op, 'opcode': OPCODES[op], 'fields': {}}
-
-    # ... (LOAD, LDI, STORE, NEQ логика остается без изменений) ...
-    # НОВЫЕ ОПЕРАЦИИ (Регистр-Регистр)
-    if op in ('ADD', 'SUB'):
-        # Синтаксис: R[A] = R[B] + R[C] (Используем B для target, C для source)
-        reg_b = parse_register(instr['target_reg'])
-        reg_c = parse_register(instr['source_reg'])
-        # A(4b) | B_reg(4b) | C_reg(4b) | 28 неисп.
-        base['fields'] = {'B_reg': reg_b, 'C_reg': reg_c}
-
-    elif op == 'JMP':
-        addr = instr['addr']
-        if not 0 <= addr <= MAX_MEM_ADDR_31: raise ValueError("Адрес перехода вне диапазона")
-        base['fields'] = {'B_addr': addr}
-
-    elif op == 'JZ':
-        reg_b = parse_register(instr['condition_reg'])
-        addr_c = instr['addr']
-        if not 0 <= addr_c <= MAX_MEM_ADDR_31: raise ValueError("Адрес перехода вне диапазона")
-        base['fields'] = {'B_reg': reg_b, 'C_addr': addr_c}
-
+    if op == 'NOP':
+        base['fields'] = {}
     elif op == 'LDI':
-        value = instr['value'];
         target_reg = parse_register(instr['target_reg'])
+        value = instr['value']
         base['fields'] = {'B_const': value, 'C_reg': target_reg}
     elif op == 'LOAD':
-        target_reg = parse_register(instr['target_reg']);
+        target_reg = parse_register(instr['target_reg'])
         addr = instr['addr']
         base['fields'] = {'B_reg': target_reg, 'C_addr': addr}
     elif op == 'STORE':
-        addr = instr['addr'];
         source_reg = parse_register(instr['source_reg'])
+        addr = instr['addr']
         base['fields'] = {'B_addr': addr, 'C_reg': source_reg}
     elif op == 'NEQ':
-        target_reg = parse_register(instr['target_reg']);
+        target_reg = parse_register(instr['target_reg'])
         addr = instr['addr']
         base['fields'] = {'B_reg': target_reg, 'C_addr': addr}
-
+    elif op == 'ADD':
+        reg_b = parse_register(instr['target_reg'])
+        reg_c = parse_register(instr['source_reg'])
+        base['fields'] = {'B_reg': reg_b, 'C_reg': reg_c}
+    elif op == 'JMP':
+        addr = instr['addr']
+        base['fields'] = {'B_addr': addr}
+    elif op == 'JZ':
+        reg_b = parse_register(instr['condition_reg'])
+        addr_c = instr['addr']
+        base['fields'] = {'B_reg': reg_b, 'C_addr': addr_c}
     return base
-
-
-def encode_instruction(ir_instr: dict) -> bytes:
+def check_range(value: int, max_val: int, field_name: str, op_name: str):
+    if not 0 <= value <= max_val:
+        raise ValueError(
+            f"Переполнение в команде {op_name}: {field_name} ({value}) выходит за допустимый максимум (0x{max_val:X}).")
+def assemble_instruction(ir_instr: Dict[str, Any]) -> bytes:
     opcode = ir_instr['opcode']
     fields = ir_instr['fields']
-    instruction = 0
-
-    if opcode in (OPCODES['ADD'], OPCODES['SUB']):
-        # A (0-3), B (4-7, Регистр), C (8-11, Регистр)
-        B = fields['B_reg'];
-        C = fields['C_reg']
-        instruction = opcode | (B << 4) | (C << 8)
-
-    # НОВЫЕ ОПЕРАЦИИ (JMP/JZ)
-    elif opcode == OPCODES['JMP']:
-        # A (0-3), B (4-39, Адрес, используем 36 бит)
-        B = fields['B_addr']
-        # Используем 36 бит для адреса (40 - 4 = 36), чтобы заполнить оставшуюся команду.
-        instruction = opcode | (B << 4)
-
-    elif opcode == OPCODES['JZ']:
-        # A (0-3), B (4-7, Регистр), C (8-38, Адрес)
-        B = fields['B_reg'];
-        C = fields['C_addr']
-        instruction = opcode | (B << 4) | (C << 8)
-
-    # ... (LOAD, LDI, STORE, NEQ логика ниже для полноты) ...
-    elif opcode == OPCODES['LDI']:
-        B = fields['B_const'];
-        C = fields['C_reg']
-        instruction = opcode | (B << 4) | (C << 30)
-    elif opcode == OPCODES['LOAD'] or opcode == OPCODES['NEQ']:
-        B = fields['B_reg'];
-        C = fields['C_addr']
-        instruction = opcode | (B << 4) | (C << 8)
-    elif opcode == OPCODES['STORE']:
-        B = fields['B_addr'];
-        C = fields['C_reg']
-        instruction = opcode | (B << 4) | (C << 35)
-
-    return instruction.to_bytes(INSTRUCTION_SIZE, byteorder='big')
-
+    op_name = ir_instr['op']
+    instr_word = 0
+    instr_word |= (opcode & 0xF)
+    if op_name == 'LDI':
+        b_val = fields.get('B_const', 0)
+        c_val = fields.get('C_reg', 0)
+        check_range(b_val, MAX_CONST_26, 'B_const', op_name)
+        instr_word |= (b_val & MAX_CONST_26) << 4
+        instr_word |= (c_val & MAX_REG_ADDR) << 30
+    elif op_name in ('LOAD', 'NEQ', 'JZ'):
+        b_val = fields.get('B_reg', 0)
+        c_val = fields.get('C_addr', 0)
+        check_range(c_val, MAX_ADDR_31, 'C_addr', op_name)
+        instr_word |= (b_val & MAX_REG_ADDR) << 4
+        instr_word |= (c_val & MAX_ADDR_31) << 8
+    elif op_name == 'STORE':
+        b_val = fields.get('B_addr', 0)
+        c_val = fields.get('C_reg', 0)
+        check_range(b_val, MAX_ADDR_31, 'B_addr', op_name)
+        instr_word |= (b_val & MAX_ADDR_31) << 4
+        instr_word |= (c_val & MAX_REG_ADDR) << 35
+    elif op_name == 'ADD':
+        b_val = fields.get('B_reg', 0)
+        c_val = fields.get('C_reg', 0)
+        instr_word |= (b_val & MAX_REG_ADDR) << 4
+        instr_word |= (c_val & MAX_REG_ADDR) << 8
+    elif op_name == 'JMP':
+        addr = fields.get('B_addr', 0)
+        check_range(addr, MAX_ADDR_31, 'B_addr', op_name)
+        instr_word |= (addr & MAX_ADDR_31) << 4
+    return instr_word.to_bytes(INSTRUCTION_SIZE, byteorder='little')
+def assemble_program(ir_program: List[Dict[str, Any]], target_path: str):
+    binary_program = b''.join([assemble_instruction(instr) for instr in ir_program])
+    with open(target_path, 'wb') as f:
+        f.write(binary_program)
+def print_ir_fields(ir_program: List[Dict[str, Any]]):
+    print("=========================================================================")
+    print("Промежуточное Представление (IR) в режиме тестирования:")
+    print("-------------------------------------------------------------------------")
+    for i, ir_instr in enumerate(ir_program):
+        op_name = ir_instr['op']
+        opcode = ir_instr['opcode']
+        fields = ir_instr['fields']
+        field_str = ', '.join([f"{k}: {v}" for k, v in fields.items()])
+        print(f"[{i:03d}] {op_name} (0x{opcode:0X}): {field_str}")
+    print("=========================================================================")
 def main_assembler():
-    parser = argparse.ArgumentParser(description='Ассемблер для УВМ (Этап 4)')
-    parser.add_argument('input', help='Путь к исходному JSON/YAML-файлу')
-    parser.add_argument('output', help='Путь к выходному бинарному файлу')
-    parser.add_argument('--test', action='store_true', help='Режим тестирования')
+    parser = argparse.ArgumentParser(description='Ассемблер УВМ (Этапы 1 и 2)')
+    parser.add_argument('source', help='Путь к исходному файлу программы (JSON/YAML)')
+    parser.add_argument('target', help='Путь для сохранения бинарного файла')
+    parser.add_argument('--test-mode', action='store_true',
+                        help='Включить режим тестирования. Выводит IR и не генерирует бинарный файл.')
     args = parser.parse_args()
-
     try:
-        with open(args.input) as f:
-            program = yaml.safe_load(f)
-
-        ir = [translate_instruction(instr) for instr in program]
-        binary_data = b''
-
-        for instr in ir:
-            binary_data += encode_instruction(instr)
-
-        if not args.test:
-            with open(args.output, 'wb') as bin_file:
-                bin_file.write(binary_data)
-
-        print(f"Размер двоичного файла: {len(binary_data)} байт(а)")
+        with open(args.source, 'r', encoding='utf-8') as f:
+            source_code = yaml.safe_load(f)
+        ir_program = [translate_instruction(instr) for instr in source_code]
+        if args.test_mode:
+            print_ir_fields(ir_program)
+            print("---")
+            print("Режим тестирования завершен.")
+            return
+        assemble_program(ir_program, args.target)
+        print(f"Ассемблирование завершено.")
+        print(f"Бинарный файл сохранен в: {args.target}")
+        print(f"Проверено {len(ir_program)} команд.")
 
     except Exception as e:
-        print(f"Ошибка ассемблирования: {e}", file=sys.stderr)
+        print(f"Ошибка при ассемблировании: {e}", file=sys.stderr)
         sys.exit(1)
-
-
 if __name__ == '__main__':
     main_assembler()

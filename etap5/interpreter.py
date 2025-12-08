@@ -10,6 +10,8 @@ OPCODES = {
 }
 INSTRUCTION_SIZE = 5
 MEMORY_SIZE = 2 ** 20
+
+
 class VirtualMachine:
     def __init__(self, input_file=None):
         self.data_memory = [0] * MEMORY_SIZE
@@ -72,10 +74,12 @@ class VirtualMachine:
 
         self.registers[target_reg] = result
 
+    # --- ИСПРАВЛЕННАЯ ЛОГИКА NEQ (Логическая операция) ---
     def _execute_NEQ(self, target_reg, addr):
-        if self.registers[target_reg] != 0:
-            return addr
-        return None
+        val_reg = self.registers[target_reg]
+        val_mem = self.data_memory[addr]
+        # Если значения не равны, записываем 1 в регистр, иначе 0.
+        self.registers[target_reg] = 1 if val_reg != val_mem else 0
 
     def run_cycle(self):
         while self.pc < len(self.instruction_memory):
@@ -128,14 +132,16 @@ class VirtualMachine:
                 C_addr = (instruction >> 8) & 0x7FFFFFFF
                 B_reg = (instruction >> 4) & 0xF
                 self._execute_LOAD(B_reg, C_addr)
+
+            # --- ИСПРАВЛЕННЫЙ NEQ (Вызов логической операции) ---
             elif op_name == 'NEQ':
                 C_addr = (instruction >> 8) & 0x7FFFFFFF
                 B_reg = (instruction >> 4) & 0xF
-                jump_addr = self._execute_NEQ(B_reg, C_addr)
-                if jump_addr is not None:
-                    next_pc = jump_addr
+                self._execute_NEQ(B_reg, C_addr)
 
             self.pc = next_pc
+
+
 def main_interpreter():
     parser = argparse.ArgumentParser(description='Интерпретатор УВМ (Финальный)')
     parser.add_argument('binary', help='Путь к бинарному файлу с программой')
@@ -144,7 +150,11 @@ def main_interpreter():
     parser.add_argument('--input', help='Путь к текстовому файлу с входными данными', default=None)
 
     args = parser.parse_args()
-    start, end = map(int, args.range.split(':'))
+    try:
+        start, end = map(int, args.range.split(':'))
+    except ValueError:
+        print("Ошибка: Неверный формат диапазона. Используйте, например, '0:50'.", file=sys.stderr)
+        sys.exit(1)
 
     vm = VirtualMachine(input_file=args.input)
     vm.load_program(args.binary)
