@@ -1,0 +1,39 @@
+[
+  {
+    "op": "LDI",
+    "target_reg": "R1",
+    "value": 5
+  },
+  {
+    "op": "LDI",
+    "target_reg": "R10",
+    "value": 1
+  },
+  {
+    "op": "JZ",
+    "condition_reg": "R1",
+    "addr": 40
+  },
+  {
+    "op": "STORE",
+    "source_reg": "R10",
+    "addr": 50
+  },
+  {
+    "op": "JMP",
+    "addr": 50
+  },
+  {
+    "op": "LDI",
+    "target_reg": "R10",
+    "value": 0
+  },
+  {
+    "op": "STORE",
+    "source_reg": "R10",
+    "addr": 50
+  },
+  {
+    "op": "NOP"
+  }
+]

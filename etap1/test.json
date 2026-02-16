@@ -1,8 +1,8 @@
 [
     {
         "op": "LDI",
-        "target_reg": "R7",
-        "value": 983
+        "value": 983,
+        "target_reg": "R7"
     },
     {
         "op": "LOAD",

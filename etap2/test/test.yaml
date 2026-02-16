@@ -1,0 +1,9 @@
+- op: LOAD
+  args: [R1, 0x64]
+- op: LOAD
+  args: [R2, 0xC8]
+- op: ADD
+  args: [R1, R2]
+- op: STORE
+  args: [R1, 0x12C]
+- op: HALT

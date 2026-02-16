@@ -1,0 +1,65 @@
+TASK 13 — 
+1. Being able to work with another device or program means the system is compatible.
+(Биинг эйбл ту уорк уиз эназэр дивайс ор прогрэм минз зэ систэм из компэтибл.)
+(Возможность работать с другим устройством или программой означает, что система совместима.)
+2. A user-friendly interface based on graphics and using a WIMP environment is called a GUI.
+(Э юзэр-фрэндли интерфейс бейст он графикс энд юзинг э УИМП энвайрэнмэнт из колд э Джи-Ю-Ай.)
+(Удобный интерфейс, основанный на графике и использующий WIMP-среду, называется GUI.)
+
+
+3. A type of computer software whose copyright holder allows users to use, study, change and distribute it is open-source software.
+(Э тайп ов компьютер софтвэ хуз копирайт хоулдэр элауз юзэрз ту юз, стади, чейндж энд дистрибьют ит — зис из оупен-сорс софтвэ.)
+(Тип компьютерного ПО, владелец прав на который разрешает использовать, изучать, изменять и распространять его, — это открытое ПО.)
+
+
+4. A set of programs that controls the hardware and software of a computer system is an operating system.
+(Э сэт ов прогрэмз зэт контролз зэ хардвэр энд софтвэр ов э компьютер систэм — зис из эн оперэйтинг систэм.)
+(Набор программ, который управляет аппаратным и программным обеспечением компьютера, — это операционная система.)
+
+
+5. The way to interact with a computer by typing commands in text form is called a CLI.
+(Зэ уэй ту интэрэкт уиз э компьютер бай тайпинг командз ин текст форм из колд э Си-Эл-Ай.)
+(Способ взаимодействия с компьютером через ввод текстовых команд называется CLI.)
+
+
+6. Non-free software that users are not allowed to share or modify is proprietary software.
+(Нон-фри софтвэ зэт юзэрз ар нот эллауд ту шер ор модифай из пропрайэтэри софтвэ.)
+(Несвободное ПО, которое пользователи не могут изменять или распространять, — это проприетарное ПО.)
+
+
+TASK 14 — 
+1. CLI is still used by software developers and system administrators to configure computers, install software, and access features that are not available in the graphical interface.
+(Си-Эл-Ай из стил юзд бай софтвэр дэвэлопэрз энд систэм администрэйторз ту конфигюр компьютэрз, инстол софтвэр энд эксес фичэрз зэт ар нот эвэйлэбл ин зэ графикал интерфейс.)
+(CLI всё ещё используется разработчиками и администраторами для настройки компьютеров, установки ПО и доступа к функциям, недоступным в графическом интерфейсе.)
+
+2. An operating system is a set of programs that lies between application software and the computer hardware.
+(Эн оперэйтинг систэм из э сэт ов прогрэмз зэт лайз битуин эпликэйшн софтвэр энд зэ компьютер хардвэр.)
+(ОС — это набор программ, который лежит между прикладным ПО и аппаратным обеспечением.)
+
+3. Linux is open-source software developed under the GNU General Public License.
+(Линукс из оупен-сорс софтвэр дэвэлопт анда зэ ГНу Дженерал Паблик Лайсэнс.)
+(Linux — это open-source ПО, разработанное под лицензией GNU GPL.)
+
+4. What are the benefits of CLI over GUI?
+(Уот ар зэ бэнэфитс ов Си-Эл-Ай оува Джи-Ю-Ай?)
+(В чём преимущества CLI перед GUI?)
+
+5. In case of open-source software, you can adjust a program to your needs.
+(Ин кейс ов оупен-сорс софтвэр, ю кэн эдджаст э прогрэм ту ё нидз.)
+(В случае open-source ПО вы можете настроить программу под свои нужды.)
+
+6. GUI is more user-friendly, more convenient to use than the command line interface since it uses a WIMP environment.
+(Джи-Ю-Ай из мо юзэр-фрэндли, мо конвиниэнт ту юз зэн зэ команд лайн интерфейс синс ит юзэз э УИМП энвайрэнмэнт.)
+(GUI более удобен для пользователя, более комфортен в использовании, чем интерфейс командной строки.)
+
+7. Apart from the fact that it’s freely distributed, Linux’s functionality, adaptability and robustness have made it the main alternative to proprietary Unix and Microsoft operating systems.
+(Апарт фром зэ фэкт зэт итс фрили дистрибьютэд, Линуксиз фанкшнэлити, адаптэбилити энд роубастнэс хэв мэйд ит зэ мэйн олтэрнэтив ту пропрайэтэри Юникс энд Майкрософт оу-эсиз.)
+(Помимо того, что Linux распространяется бесплатно, его функциональность, адаптивность и надёжность сделали его основной альтернативой проприетарным Unix и Microsoft.)
+
+8. The dominant general-purpose desktop operating system is Microsoft Windows with a market share of around 77%.
+(Зэ доминэнт дженерал-пёпэс десттоп оu-эс из Майкрософт Уиндоуc уиз э маркет шер ов эраунд сэвэнти-сэвэн парсент.)
+(Доминирующей настольной ОС общего назначения является Windows с долей рынка около 77%.)
+
+9. One of the functions of an OS is booting, which is the process of turning on the computer and powering up the system.
+(Уан ов зэ фанкшнз ов эн оу-эс из бутинг, уич из зэ процес ов тёнин он зэ компьютер энд пауэринг ап зэ систэм.)
+(Одна из функций ОС — загрузка, то есть процесс включения компьютера и запуска системы.)
